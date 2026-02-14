@@ -1,0 +1,16 @@
+{
+  "name": "greecing-miniapp",
+  "version": "1.0.0",
+  "description": "Greecing Real Estate - Telegram Mini App",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod",
+    "test-notify": "bash test-notify.sh",
+    "setup": "bash setup.sh",
+    "health": "curl -s $(cat .env 2>/dev/null | grep APP_URL | cut -d= -f2)/api/health | node -e \"process.stdin.on('data',d=>console.log(JSON.stringify(JSON.parse(d),null,2)))\""
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
