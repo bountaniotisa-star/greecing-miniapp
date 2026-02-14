@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Greecing Real Estate</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#02045E;--navy-mid:#0d1066;--bg:#f4f2ed;--bg-card:#fff;--bg-input:#eeebe4;--gold:#c49a2c;--gold-soft:rgba(196,154,44,.1);--green:#1a9a5a;--green-soft:rgba(26,154,90,.08);--blue:#2a6bc4;--blue-soft:rgba(42,107,196,.08);--red:#c44230;--red-soft:rgba(196,66,48,.08);--amber:#c48a20;--amber-soft:rgba(196,138,32,.08);--text:#1a1a2e;--text-sec:#4a4e5c;--text-dim:#8a8e9c;--border:rgba(2,4,94,.07);--r:12px;--font:'Plus Jakarta Sans',-apple-system,sans-serif;--sh:0 1px 3px rgba(0,0,0,.05)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}.app{max-width:430px;margin:0 auto;min-height:100vh}
+.header{position:sticky;top:0;z-index:50;background:var(--navy);padding:14px 16px 12px;box-shadow:0 4px 20px rgba(2,4,94,.3)}
+.header-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.logo-svg{height:20px;flex-shrink:0}.brand-tag{font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-left:auto}
+.stats-row{display:flex;gap:5px}.mini-stat{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:7px 4px;text-align:center}.mini-stat-val{font-size:14px;font-weight:800;color:#fff;transition:transform .2s}.mini-stat-lbl{font-size:7.5px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:.3px}.mini-stat-val.gold{color:var(--gold)}
+.filters-section{padding:10px 16px 8px;background:var(--bg-card);position:sticky;top:88px;z-index:40;border-bottom:1px solid var(--border);box-shadow:var(--sh)}
+.filter-row{display:flex;gap:5px;margin-bottom:5px}.filter-select{flex:1;position:relative}
+.filter-select select{width:100%;appearance:none;-webkit-appearance:none;padding:8px 24px 8px 9px;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:11.5px;font-weight:600;cursor:pointer;outline:none}
+.filter-select select:focus{border-color:var(--navy)}.filter-select select:disabled{opacity:.35;cursor:not-allowed}
+.filter-select::after{content:'\u25BE';position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:8px;color:var(--text-dim);pointer-events:none}
+.filter-bottom{display:flex;gap:5px;align-items:center}
+.filter-input{flex:1;padding:7px 9px;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:11.5px;font-weight:500;outline:none}.filter-input:focus{border-color:var(--navy)}.filter-input::placeholder{color:var(--text-dim)}
+.filter-sep{color:var(--text-dim);font-size:10px;font-weight:600;flex-shrink:0}
+.btn-search{padding:7px 12px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}.btn-search:active{transform:scale(.95)}
+.btn-reset{padding:7px 9px;background:transparent;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;font-family:var(--font);font-size:10px;font-weight:600;cursor:pointer;flex-shrink:0}
+.active-filters{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.active-tag{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;background:rgba(2,4,94,.06);border:1px solid rgba(2,4,94,.1);border-radius:5px;font-size:10px;font-weight:600;color:var(--navy)}.active-tag .x{cursor:pointer;font-size:9px;opacity:.5}
+.results{padding:8px 16px 100px}.results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.results-count{font-size:12px;color:var(--text-dim);font-weight:600}
+.sort-select{appearance:none;-webkit-appearance:none;padding:5px 22px 5px 8px;background:var(--bg-card) url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%238a8e9c' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center;border:1px solid var(--border);border-radius:7px;color:var(--text-sec);font-family:var(--font);font-size:10px;font-weight:600;outline:none;cursor:pointer}
+.loading{text-align:center;padding:60px 20px}.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}@keyframes spin{to{transform:rotate(360deg)}}.loading-text{font-size:13px;color:var(--text-dim);font-weight:600}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:7px;cursor:pointer;transition:all .15s;box-shadow:var(--sh)}.card:active{transform:scale(.985)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}.card-badges{display:flex;gap:4px;flex-wrap:wrap}
+.badge{padding:2px 6px;border-radius:4px;font-size:9.5px;font-weight:700}.badge-sale{background:var(--red-soft);color:var(--red)}.badge-rent{background:var(--blue-soft);color:var(--blue)}.badge-new{background:var(--green-soft);color:var(--green)}.badge-drop{background:var(--green-soft);color:var(--green)}.badge-up{background:var(--amber-soft);color:var(--amber)}.badge-mod{background:rgba(0,0,0,.03);color:var(--text-dim)}
+.card-type{font-size:10px;color:var(--text-dim);font-weight:600}.card-price{font-size:21px;font-weight:800;letter-spacing:-.5px;line-height:1.2;color:var(--navy)}
+.card-change{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;margin-top:2px;padding:2px 5px;border-radius:4px}.change-down{background:var(--green-soft);color:var(--green)}.change-up{background:var(--amber-soft);color:var(--amber)}
+.card-meta{display:flex;gap:8px;margin:6px 0;font-size:11px;color:var(--text-sec);font-weight:500}.card-meta span{display:flex;align-items:center;gap:2px}
+.card-location{font-size:11px;color:var(--text-sec);font-weight:500;margin-bottom:5px}
+.card-features{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px}.feat{padding:2px 5px;background:var(--bg-input);border-radius:4px;font-size:9px;color:var(--text-dim);font-weight:600}
+.card-dates{display:flex;gap:10px;padding-top:7px;border-top:1px solid var(--border);font-size:9.5px;color:var(--text-dim);font-weight:500;font-style:italic}
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(2,4,94,.35);z-index:200;display:none;justify-content:center;align-items:flex-end;backdrop-filter:blur(3px)}.overlay.open{display:flex}
+.sheet{width:100%;max-width:430px;max-height:88vh;background:var(--bg-card);border-top-left-radius:20px;border-top-right-radius:20px;overflow-y:auto;animation:su .3s cubic-bezier(.32,.72,0,1)}@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:32px;height:4px;background:var(--text-dim);border-radius:2px;margin:8px auto 12px;opacity:.25}
+.sheet-header{display:flex;justify-content:space-between;align-items:center;padding:0 18px 12px;border-bottom:1px solid var(--border)}
+.sheet-close{width:28px;height:28px;background:var(--bg-input);border:none;border-radius:8px;color:var(--text-dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sheet-body{padding:14px 18px 32px}
+.detail-hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:var(--r);padding:18px;text-align:center;margin-bottom:12px;color:#fff}
+.detail-price{font-size:28px;font-weight:800;letter-spacing:-1px}.detail-sub{font-size:12px;color:rgba(255,255,255,.5);font-weight:600;margin-top:3px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:12px}.detail-cell{background:var(--bg-input);border-radius:10px;padding:10px 6px;text-align:center}.detail-cell-val{font-size:16px;font-weight:700;color:var(--navy)}.detail-cell-lbl{font-size:8px;color:var(--text-dim);font-weight:700;text-transform:uppercase}
+.detail-section{margin-top:12px}.detail-section-title{font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.detail-feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}.detail-feat{display:flex;align-items:center;gap:5px;padding:7px 9px;background:var(--bg-input);border-radius:7px;font-size:11px;font-weight:500;color:var(--text-dim)}.detail-feat.yes{color:var(--green);background:var(--green-soft)}
+.detail-dates{margin-top:12px;padding:10px;background:var(--bg-input);border-radius:9px;font-size:10px;color:var(--text-dim);font-weight:500;line-height:1.9}
+.btn-link{display:block;width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:11px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;text-align:center;text-decoration:none}
+.empty{text-align:center;padding:48px 20px;color:var(--text-dim)}.empty-icon{font-size:36px;margin-bottom:8px}.empty-text{font-size:12px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-row">
+      <svg class="logo-svg" viewBox="0 0 300 65.613" xmlns="http://www.w3.org/2000/svg"><g><path fill="#fff" d="M17.284,65.613c-5.784,0-12.564-1.861-17.019-5.186l5.452-7.778c3.191,2.793,7.246,4.189,10.968,4.189c6.382,0,9.374-3.724,9.374-9.24v-1.995H25.86c-2.061,2.659-5.65,4.388-10.038,4.388C5.784,49.991,0,42.146,0,32.973c0-9.174,5.784-17.351,15.755-17.351c4.122,0,8.244,1.662,10.57,5.185h0.133v-4.254h10.304v29.981C36.762,59.497,29.051,65.613,17.284,65.613z M18.348,24.53c-4.919,0-7.778,3.789-7.778,8.376c0,4.387,2.858,8.443,7.778,8.443c4.986,0,8.044-3.923,8.044-8.443S23.268,24.53,18.348,24.53z"/><path fill="#fff" d="M66.875,25.46c-.998-.266-1.928-.332-2.792-.332c-5.85,0-7.778,4.786-7.778,7.512v17.018H45.402V16.553h10.503v4.787h.133c1.662-3.325,4.919-5.717,8.975-5.717c.864,0,1.795.066,2.327.266L66.875,25.46z"/><path fill="#fff" d="M103.304,36.097H79.305c.333,3.656,3.989,6.249,7.911,6.249c3.457,0,5.85-1.462,7.313-3.456l7.578,4.785c-3.124,4.521-8.31,7.048-15.024,7.048c-9.972,0-18.215-6.315-18.215-17.484c0-10.835,7.845-17.749,17.882-17.749c9.772,0,16.62,6.714,16.62,18.015C103.371,34.369,103.371,35.3,103.304,36.097z M93.332,29.316c0-3.457-2.193-6.315-6.515-6.315c-4.188,0-7.246,2.925-7.512,6.315H93.332z"/><path fill="#fff" d="M142.922,36.097h-23.999c.333,3.656,3.989,6.249,7.911,6.249c3.457,0,5.851-1.462,7.313-3.456l7.579,4.785c-3.124,4.521-8.31,7.048-15.024,7.048c-9.972,0-18.215-6.315-18.215-17.484c0-10.835,7.845-17.749,17.882-17.749c9.772,0,16.62,6.714,16.62,18.015C142.989,34.369,142.989,35.3,142.922,36.097z M132.951,29.316c0-3.457-2.194-6.315-6.515-6.315c-4.188,0-7.246,2.925-7.513,6.315H132.951z"/><path fill="#fff" d="M172.569,27.256c-1.196-1.596-3.59-2.659-5.784-2.659c-4.587,0-7.645,3.922-7.645,8.509s2.992,8.442,7.778,8.442c2.193,0,4.587-.864,5.916-2.459l6.049,7.379c-2.725,2.658-7.378,4.255-12.231,4.255c-10.437,0-18.547-6.647-18.547-17.617c0-10.769,8.177-17.616,18.48-17.616c4.72,0,9.706,1.794,12.298,4.454L172.569,27.256z"/><path fill="#fff" d="M188.789,11.966c-3.524,0-6.249-2.726-6.249-5.983c0-3.191,2.725-5.983,6.249-5.983c3.456,0,6.249,2.659,6.249,5.983C195.038,9.373,192.245,11.966,188.789,11.966z M183.338,49.658V16.553h10.901v33.105H183.338z"/><path fill="#fff" d="M224.619,49.658V31.576c0-3.656-.998-6.979-4.92-6.979c-3.855,0-5.85,3.324-5.85,7.112v17.949h-10.969V16.553h10.569v4.587h.134c1.528-2.925,5.318-5.518,9.904-5.518c8.909,0,12.1,6.914,12.1,13.562v20.475H224.619z"/><path fill="#fff" d="M259.45,65.613c-5.783,0-12.563-1.861-17.018-5.186l5.451-7.778c3.19,2.793,7.246,4.189,10.969,4.189c6.382,0,9.373-3.724,9.373-9.24v-1.995h-.199c-2.061,2.659-5.65,4.388-10.038,4.388c-10.038,0-15.821-7.845-15.821-17.019c0-9.174,5.783-17.351,15.755-17.351c4.121,0,8.243,1.662,10.57,5.185h.133v-4.254h10.304v29.981C278.929,59.497,271.218,65.613,259.45,65.613z M260.515,24.53c-4.919,0-7.778,3.789-7.778,8.376c0,4.387,2.859,8.443,7.778,8.443c4.985,0,8.043-3.923,8.043-8.443S265.434,24.53,260.515,24.53z"/><path fill="#fff" d="M293.353,50.324c-3.656,0-6.78-2.793-6.78-6.449c0-3.59,3.057-6.582,6.78-6.582c3.59,0,6.647,2.859,6.647,6.516S296.942,50.324,293.353,50.324z"/></g></svg>
+      <span class="brand-tag">Real Estate</span>
+    </div>
+    <div class="stats-row">
+      <div class="mini-stat"><div class="mini-stat-val" id="sTotal">—</div><div class="mini-stat-lbl">Αγγελίες</div></div>
+      <div class="mini-stat"><div class="mini-stat-val gold" id="sNew">—</div><div class="mini-stat-lbl">Νέες 24ω</div></div>
+      <div class="mini-stat"><div class="mini-stat-val" id="sDrops" style="color:#ff6b6b">—</div><div class="mini-stat-lbl">Μειώσεις</div></div>
+      <div class="mini-stat"><div class="mini-stat-val gold" id="sAvg">—</div><div class="mini-stat-lbl">Μέσο €/τμ</div></div>
+    </div>
+  </div>
+  <div class="filters-section">
+    <div class="filter-row">
+      <div class="filter-select"><select id="fCat" onchange="apply()"><option value="">Κατηγορία</option><option value="res">🏠 Κατοικία</option><option value="com">🏢 Επαγγελματικό</option></select></div>
+      <div class="filter-select"><select id="fTrans" onchange="apply()"><option value="">Συναλλαγή</option><option value="Πώληση">Πώληση</option><option value="Ενοικίαση">Ενοικίαση</option></select></div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-select"><select id="fSec" onchange="onSec()"><option value="">Τομέας</option><option value="north">Βόρεια Προάστια</option><option value="south">Νότια Προάστια</option><option value="east">Ανατολικά Προάστια</option><option value="west">Δυτικά Προάστια</option><option value="center">Κέντρο Αθήνας</option><option value="piraeus">Πειραιάς</option></select></div>
+      <div class="filter-select"><select id="fArea" onchange="apply()" disabled><option value="">Περιοχή</option></select></div>
+    </div>
+    <div class="filter-bottom">
+      <input type="number" class="filter-input" id="fPMin" placeholder="Τιμή από" onchange="apply()">
+      <span class="filter-sep">—</span>
+      <input type="number" class="filter-input" id="fPMax" placeholder="Τιμή έως" onchange="apply()">
+      <button class="btn-search" onclick="apply()">🔍</button>
+      <button class="btn-reset" onclick="resetAll()">✕</button>
+    </div>
+    <div class="active-filters" id="tags"></div>
+  </div>
+  <div class="results">
+    <div class="results-header">
+      <div class="results-count" id="rCount">—</div>
+      <select class="sort-select" id="sortBy" onchange="apply()"><option value="newest">Πιο πρόσφατα</option><option value="price_asc">Τιμή ↑</option><option value="price_desc">Τιμή ↓</option><option value="sqm_desc">Εμβαδόν ↓</option><option value="ppsqm_asc">€/τμ ↑</option></select>
+    </div>
+    <div id="list"></div>
+  </div>
+</div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeDetail()"><div class="sheet" id="sheet"></div></div>
+<script>
+// ═══ TELEGRAM WEBAPP INIT ═══
+if(window.Telegram&&window.Telegram.WebApp){
+  const tg=window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+  tg.headerColor='#02045E';
+  tg.backgroundColor='#f4f2ed';
+}
+
+// ═══ CONFIG ═══
+const SB_URL='https://ewubsvzjxvwkwtvlrfek.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3dWJzdnpqeHZ3a3d0dmxyZmVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxNTMyNDMsImV4cCI6MjA1MzcyOTI0M30.xWZAlCNFxJam3QbbVgb4csjSb6YpnjHfqXVBi6sL8gU';
+const TBL='listings';
+
+// ═══ SECTORS ═══
+const SEC={
+  north:{l:'Βόρεια Προάστια',a:['Αγία Παρασκευή','Άγιος Στέφανος','Βριλήσσια','Γέρακας','Διόνυσος','Δροσιά','Εκάλη','Κηφισιά','Λυκόβρυση','Μαρούσι','Μελίσσια','Νέα Ερυθραία','Νέα Πεντέλη','Νέο Ψυχικό','Παλλήνη','Πεύκη','Πολύδροσο','Πράσινος Λόφος','Σταμάτα','Φιλοθέη','Χαλάνδρι','Χολαργός','Ψυχικό']},
+  south:{l:'Νότια Προάστια',a:['Άγιος Δημήτριος','Άλιμος','Αργυρούπολη','Βάρη','Βούλα','Βουλιαγμένη','Γλυφάδα','Ελληνικό','Ηλιούπολη','Καλλιθέα','Νέα Σμύρνη','Παλαιό Φάληρο']},
+  east:{l:'Ανατολικά Προάστια',a:['Αρτέμιδα','Γλυκά Νερά','Κορωπί','Μαρκόπουλο','Νέα Μάκρη','Παιανία','Ραφήνα','Σπάτα']},
+  west:{l:'Δυτικά Προάστια',a:['Αγ. Ανάργυροι','Αιγάλεω','Ίλιον','Καματερό','Πετρούπολη','Περιστέρι','Χαϊδάρι']},
+  center:{l:'Κέντρο Αθήνας',a:['Άγιος Ελευθέριος','Αθήνα - Κέντρο','Αμπελόκηποι','Γκάζι','Γουδή','Εξάρχεια','Ζωγράφου','Ιλίσια','Κολωνάκι','Κολωνός','Κουκάκι','Κυψέλη','Μετς','Μοναστηράκι','Νέος Κόσμος','Παγκράτι','Πατήσια','Πετράλωνα','Πλάκα','Πλατεία Αττικής','Θησείο']},
+  piraeus:{l:'Πειραιάς',a:['Αγία Τριάδα','Δραπετσώνα','Ηπειρώτικα','Καλλίπολη','Καστέλλα','Κέντρο','Κερατσίνι','Μοσχάτο','Νίκαια','Πασαλιμάνι','Πειραιάς','Φρεαττύδα']}
+};
+const RES=['Διαμέρισμα','Μονοκατοικία','Μεζονέτα','Γκαρσονιέρα','οικία','Βίλα'];
+const COM=['Γραφείο','Κατάστημα'];
+const EM={'Διαμέρισμα':'🏢','Μονοκατοικία':'🏡','Μεζονέτα':'🏘️','Γραφείο':'🏢','Κατάστημα':'🏪','Γκαρσονιέρα':'🏠','οικία':'🏡'};
+
+let ALL=[],FILT=[];
+
+// ═══ FETCH ═══
+async function load(){
+  document.getElementById('list').innerHTML='<div class="loading"><div class="spinner"></div><div class="loading-text">Φόρτωση αγγελιών...</div></div>';
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/${TBL}?select=*&order=last_seen_date.desc&limit=2000`,{headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`}});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    ALL=await r.json();
+    apply();
+  }catch(e){document.getElementById('list').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Σφάλμα: ${e.message}</div></div>`;}
+}
+
+// ═══ HELPERS ═══
+const fmt=n=>n!=null?new Intl.NumberFormat('el-GR').format(Math.round(n))+'€':'N/A';
+const fmtK=n=>n>=1e6?(n/1e6).toFixed(1)+'M€':n>=1000?Math.round(n/1000)+'k€':fmt(n);
+function timeAgo(ds){if(!ds)return'';const d=new Date(ds),now=new Date(),df=now-d,m=Math.floor(df/6e4),h=Math.floor(df/36e5),dy=Math.floor(df/864e5);if(m<60)return m+' λεπτά πριν';if(h<24)return h+(h===1?' ώρα πριν':' ώρες πριν');if(dy===1)return'χθες';if(dy<7)return dy+' ημέρες πριν';return d.toLocaleDateString('el-GR',{day:'numeric',month:'short'});}
+function fmtDate(ds){if(!ds)return'—';return new Date(ds).toLocaleDateString('el-GR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+
+// ═══ SECTOR CASCADE ═══
+function onSec(){
+  const s=document.getElementById('fSec').value,a=document.getElementById('fArea');
+  a.innerHTML='<option value="">Περιοχή</option>';
+  if(s&&SEC[s]){a.disabled=false;SEC[s].a.forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;a.appendChild(o);})}
+  else{a.disabled=true;}
+  apply();
+}
+
+// ═══ APPLY FILTERS + DYNAMIC STATS ═══
+function apply(){
+  let r=[...ALL];
+  const cat=document.getElementById('fCat').value;
+  const trans=document.getElementById('fTrans').value;
+  const sec=document.getElementById('fSec').value;
+  const area=document.getElementById('fArea').value;
+  const pMin=parseInt(document.getElementById('fPMin').value);
+  const pMax=parseInt(document.getElementById('fPMax').value);
+  const sort=document.getElementById('sortBy').value;
+
+  if(cat==='res')r=r.filter(l=>RES.includes(l.property_type));
+  if(cat==='com')r=r.filter(l=>COM.includes(l.property_type));
+  if(trans)r=r.filter(l=>l.transaction_type===trans);
+  if(area)r=r.filter(l=>l.area===area);
+  else if(sec&&SEC[sec])r=r.filter(l=>SEC[sec].a.includes(l.area)||(sec==='piraeus'&&l.city==='Πειραιάς'));
+  if(!isNaN(pMin))r=r.filter(l=>l.price>=pMin);
+  if(!isNaN(pMax))r=r.filter(l=>l.price<=pMax);
+
+  switch(sort){
+    case'newest':r.sort((a,b)=>(b.last_seen_date||'').localeCompare(a.last_seen_date||''));break;
+    case'price_asc':r.sort((a,b)=>(a.price||0)-(b.price||0));break;
+    case'price_desc':r.sort((a,b)=>(b.price||0)-(a.price||0));break;
+    case'sqm_desc':r.sort((a,b)=>(b.square_meters||0)-(a.square_meters||0));break;
+    case'ppsqm_asc':r.sort((a,b)=>(a.price_per_sqm||99999)-(b.price_per_sqm||99999));break;
+  }
+  FILT=r;
+  // ─── DYNAMIC STATS (reflect filtered results) ───
+  const h24=new Date(Date.now()-864e5).toISOString();
+  const n24=r.filter(l=>(l.first_seen_date||l.last_seen_date||'')>=h24).length;
+  const drops=r.filter(l=>l.price_change&&l.price_change<0).length;
+  const wp=r.filter(l=>l.price_per_sqm>0);
+  const avg=wp.length?Math.round(wp.reduce((s,l)=>s+l.price_per_sqm,0)/wp.length):0;
+  document.getElementById('sTotal').textContent=r.length;
+  document.getElementById('sNew').textContent=n24;
+  document.getElementById('sDrops').textContent=drops;
+  document.getElementById('sAvg').textContent=avg?avg+'€':'—';
+
+  renderCards(r);
+  renderTags(cat,trans,sec,area,pMin,pMax);
+                        }
+
+// ═══ TAGS ═══
+function renderTags(cat,trans,sec,area,pMin,pMax){
+  const t=[];
+  if(cat==='res')t.push({l:'🏠 Κατοικία',c:()=>{document.getElementById('fCat').value='';apply();}});
+  if(cat==='com')t.push({l:'🏢 Επαγγελματικό',c:()=>{document.getElementById('fCat').value='';apply();}});
+  if(trans)t.push({l:trans,c:()=>{document.getElementById('fTrans').value='';apply();}});
+  if(sec)t.push({l:'📍 '+SEC[sec].l,c:()=>{document.getElementById('fSec').value='';onSec();}});
+  if(area)t.push({l:'📌 '+area,c:()=>{document.getElementById('fArea').value='';apply();}});
+  if(!isNaN(pMin))t.push({l:'Από '+fmt(pMin),c:()=>{document.getElementById('fPMin').value='';apply();}});
+  if(!isNaN(pMax))t.push({l:'Έως '+fmt(pMax),c:()=>{document.getElementById('fPMax').value='';apply();}});
+  document.getElementById('tags').innerHTML=t.map((x,i)=>`<span class="active-tag">${x.l} <span class="x" onclick="event.stopPropagation();_c[${i}]()">✕</span></span>`).join('');
+  window._c=t.map(x=>x.c);
+}
+function resetAll(){['fCat','fTrans','fSec'].forEach(id=>document.getElementById(id).value='');const a=document.getElementById('fArea');a.value='';a.disabled=true;a.innerHTML='<option value="">Περιοχή</option>';['fPMin','fPMax'].forEach(id=>document.getElementById(id).value='');document.getElementById('sortBy').value='newest';apply();}
+
+// ═══ RENDER CARDS ═══
+function renderCards(results){
+  document.getElementById('rCount').textContent=results.length+' αγγελίε'+(results.length===1?'α':'ς');
+  if(!results.length){document.getElementById('list').innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Δεν βρέθηκαν αποτελέσματα</div></div>';return;}
+  document.getElementById('list').innerHTML=results.slice(0,60).map(l=>{
+    const em=EM[l.property_type]||'🏠';
+    let bg='';
+    if(l.transaction_type==='Πώληση')bg+='<span class="badge badge-sale">Πώληση</span>';
+    else if(l.transaction_type==='Ενοικίαση')bg+='<span class="badge badge-rent">Ενοικίαση</span>';
+    if(l.change_type==='NEW')bg+='<span class="badge badge-new">Νέα</span>';
+    else if(l.change_type==='PRICE_DROP')bg+='<span class="badge badge-drop">📉 Μείωση</span>';
+    else if(l.change_type==='PRICE_UP')bg+='<span class="badge badge-up">📈 Αύξηση</span>';
+    else if(l.change_type==='MODIFIED')bg+='<span class="badge badge-mod">Ενημέρωση</span>';
+    let ch='';
+    if(l.price_change&&l.price_change<0){const d=Math.abs(l.price_change),pv=l.price+d,pc=pv>0?((d/pv)*100).toFixed(1):'?';ch=`<div class="card-change change-down">📉 −${fmt(d)} (−${pc}%) από ${fmt(pv)}</div>`;}
+    else if(l.price_change&&l.price_change>0){const pv=l.price-l.price_change,pc=pv>0?((l.price_change/pv)*100).toFixed(1):'?';ch=`<div class="card-change change-up">📈 +${fmt(l.price_change)} (+${pc}%) από ${fmt(pv)}</div>`;}
+    const ff=[];if(l.parking==='Ναι')ff.push('🅿️ Parking');if(l.elevator==='Ναι')ff.push('🛗 Ασανσέρ');if(l.view==='Ναι')ff.push('👁 Θέα');if(l.build_year&&parseInt(l.build_year)>=2020)ff.push('✨ Νεόδμητο');
+    const first=l.first_seen_date||l.last_seen_date,last=l.last_seen_date,showLast=first!==last;
+    const fLbl=l.change_type==='NEW'?'Ανέβηκε':'Πρώτη εμφάνιση';
+    return`<div class="card" onclick="openD('${l.listing_id}')">
+<div class="card-top"><div class="card-badges">${bg}</div><div class="card-type">${em} ${l.property_type||''}</div></div>
+<div class="card-price">${l.transaction_type==='Ενοικίαση'&&l.price<10000?fmt(l.price)+'/μήνα':fmtK(l.price)}</div>
+${ch}
+<div class="card-meta">${l.square_meters?`<span>📐 ${l.square_meters}τμ</span>`:''}${l.bedrooms?`<span>🛏 ${l.bedrooms}</span>`:''}${l.bathrooms?`<span>🚿 ${l.bathrooms}</span>`:''}${l.floor?`<span>🏗 ${l.floor}${!isNaN(l.floor)?'ος':''}</span>`:''}${l.price_per_sqm?`<span>💶 ${l.price_per_sqm}€/τμ</span>`:''}</div>
+<div class="card-location">📍 ${l.area||''}${l.city?' · '+l.city:''}</div>
+${ff.length?`<div class="card-features">${ff.map(f=>`<span class="feat">${f}</span>`).join('')}</div>`:''}
+<div class="card-dates"><span>${fLbl}: ${timeAgo(first)}</span>${showLast?`<span>Ανανεώθηκε: ${timeAgo(last)}</span>`:''}</div>
+</div>`;}).join('');
+    }
+
+// ═══ DETAIL ═══
+function openD(id){
+  const l=ALL.find(x=>x.listing_id===id);if(!l)return;
+  const em=EM[l.property_type]||'🏠';
+  const feats=[{n:'Parking',v:l.parking,i:'🅿️'},{n:'Ασανσέρ',v:l.elevator,i:'🛗'},{n:'Μπαλκόνι',v:l.balcony,i:'🌅'},{n:'Θέα',v:l.view,i:'👁'}];
+  let cn='';
+  if(l.price_change&&l.price_change<0)cn=`<div style="display:inline-flex;margin-top:8px;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.15);color:#fff;font-size:11px;font-weight:700">📉 −${fmt(Math.abs(l.price_change))}</div>`;
+  else if(l.price_change&&l.price_change>0)cn=`<div style="display:inline-flex;margin-top:8px;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.15);color:#fff;font-size:11px;font-weight:700">📈 +${fmt(l.price_change)}</div>`;
+  document.getElementById('sheet').innerHTML=`
+<div class="sheet-handle"></div>
+<div class="sheet-header"><span style="font-weight:700;font-size:15px">${em} ${l.property_type||''}${l.transaction_type?' · '+l.transaction_type:''}</span><button class="sheet-close" onclick="closeDetail()">✕</button></div>
+<div class="sheet-body">
+<div class="detail-hero"><div class="detail-price">${fmt(l.price)}${l.transaction_type==='Ενοικίαση'&&l.price<10000?'/μήνα':''}</div><div class="detail-sub">${l.price_per_sqm?l.price_per_sqm+'€/τ.μ.':''}</div>${cn}</div>
+<div class="detail-grid"><div class="detail-cell"><div class="detail-cell-val">${l.square_meters||'—'}</div><div class="detail-cell-lbl">τ.μ.</div></div><div class="detail-cell"><div class="detail-cell-val">${l.bedrooms||'—'}</div><div class="detail-cell-lbl">Υπνοδ.</div></div><div class="detail-cell"><div class="detail-cell-val">${l.floor||'—'}</div><div class="detail-cell-lbl">Όροφος</div></div></div>
+<div class="detail-section"><div class="detail-section-title">📍 Τοποθεσία</div><div style="font-size:14px;font-weight:600">${l.area||''}${l.city?' · '+l.city:''}</div></div>
+<div class="detail-section"><div class="detail-section-title">Χαρακτηριστικά</div><div class="detail-feat-grid">${feats.map(f=>`<div class="detail-feat ${f.v==='Ναι'?'yes':''}">${f.i} ${f.n}: ${f.v==='Ναι'?'Ναι':'Όχι'}</div>`).join('')}${l.build_year?`<div class="detail-feat yes">📅 Έτος: ${l.build_year}</div>`:''}${l.bathrooms?`<div class="detail-feat yes">🚿 Μπάνια: ${l.bathrooms}</div>`:''}</div></div>
+<div class="detail-dates">📅 Ανέβηκε: ${fmtDate(l.first_seen_date||l.last_seen_date)}<br>🔄 Ενημέρωση: ${fmtDate(l.last_seen_date)}<br>📊 Κατάσταση: ${l.change_type==='NEW'?'Νέα αγγελία':l.change_type==='PRICE_DROP'?'Μείωση τιμής':l.change_type==='PRICE_UP'?'Αύξηση τιμής':'Ενημερώθηκε'}</div>
+<a class="btn-link" href="https://www.spitogatos.gr/aggelia/${l.listing_id}" target="_blank">🔗 Δες στο Spitogatos →</a>
+</div>`;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeDetail(){document.getElementById('overlay').classList.remove('open');}
+
+// ═══ INIT ═══
+load();
+</script>
+</body>
+</html>
