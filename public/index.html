@@ -253,7 +253,7 @@ function openD(id){
 <div class="detail-section"><div class="detail-section-title">📍 Τοποθεσία</div><div style="font-size:14px;font-weight:600">${l.area||''}${l.city?' · '+l.city:''}</div></div>
 <div class="detail-section"><div class="detail-section-title">Χαρακτηριστικά</div><div class="detail-feat-grid">${feats.map(f=>`<div class="detail-feat ${f.v==='Ναι'?'yes':''}">${f.i} ${f.n}: ${f.v==='Ναι'?'Ναι':'Όχι'}</div>`).join('')}${l.build_year?`<div class="detail-feat yes">📅 Έτος: ${l.build_year}</div>`:''}${l.bathrooms?`<div class="detail-feat yes">🚿 Μπάνια: ${l.bathrooms}</div>`:''}</div></div>
 <div class="detail-dates">📅 Ανέβηκε: ${fmtDate(l.first_seen_date||l.last_seen_date)}<br>🔄 Ενημέρωση: ${fmtDate(l.last_seen_date)}<br>📊 Κατάσταση: ${l.change_type==='NEW'?'Νέα αγγελία':l.change_type==='PRICE_DROP'?'Μείωση τιμής':l.change_type==='PRICE_UP'?'Αύξηση τιμής':'Ενημερώθηκε'}</div>
-<a class="btn-link" href="https://www.spitogatos.gr/aggelia/${l.listing_id}" target="_blank">🔗 Δες στο Spitogatos →</a>
+<a class="btn-link" href="${l.listing_url||'https://www.spitogatos.gr/aggelia/'+l.listing_id}" target="_blank">🔗 Δες στο Spitogatos →</a>
 </div>`;
   document.getElementById('overlay').classList.add('open');
 }
