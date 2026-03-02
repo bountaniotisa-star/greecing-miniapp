@@ -105,7 +105,7 @@
   </div>
   <div class="filters-section">
     <div class="filter-row">
-      <div class="filter-select"><select id="fCat" onchange="apply()"><option value="">Κατηγορία</option><option value="res">🏠 Κατοικία</option><option value="com">🏢 Επαγγελματικό</option></select></div>
+      <div class="filter-select"><select id="fCat" onchange="apply()"><option value="">Βατηγορία</option><option value="res">🏠 Κατοικία</option><option value="com">🏢 Επαγγελματικό</option></select></div>
       <div class="filter-select"><select id="fTrans" onchange="apply()"><option value="">Συναλλαγή</option><option value="Πώληση">Πώληση</option><option value="Ενοικίαση">Ενοικίαση</option></select></div>
     </div>
     <div class="filter-row">
@@ -156,7 +156,7 @@ const SEC={
   south:{l:'Νότια Προάστια',a:['Άγιος Δημήτριος','Άλιμος','Αργυρούπολη','Βάρη','Βούλα','Βουλιαγμένη','Γλυφάδα','Ελληνικό','Ηλιούπολη','Καλλιθέα','Νέα Σμύρνη','Παλαιό Φάληρο','Ταύρος']},
   east:{l:'Ανατολικά Προάστια',a:['Αρτέμιδα','Βαρνάβας','Γλυκά Νερά','Γραμματικό','Κορωπί','Μαραθώνας','Μαρκόπουλο','Νέα Μάκρη','Παιανία','Ραφήνα','Σπάτα','Σχινιάς']},
   west:{l:'Δυτικά Προάστια',a:['Αγία Βαρβάρα','Άγιοι Ανάργυροι','Αιγάλεω','Αχαρνές','Ίλιον','Καματερό','Περιστέρι','Πετρούπολη','Χαϊδάρι']},
-  center:{l:'Κέντρο Αθήνας',a:['Αθήνα - Κέντρο','Άγιος Ελευθέριος','Άγιος Νικόλαος','Άγιος Παντελεήμονας','Ακαδημία','Ακαδημία Πλάτωνος','Αμπελόκηποι','Άνω Πατήσια','Γκάζι - Μεταξουργείο - Βοτανικός','Γκύζη','Γουδή','Εξάρχεια','Ζωγράφου','Θησείο','Θυμαράκια','Ιλίσια','Κάτω Πατήσια','Κεραμεικός','Κολωνάκι','Κολωνός','Κουκάκι','Κυψέλη','Μετς','Μοναστηράκι','Νέος Κόσμος','Όσιος Λουκάς','Παγαράτι','Πατήσια','Πετράλωνα','Πλάκα','Πλατεία Αμερικής','Πλατεία Αττικής','Πολύγωνο','Ριζούπολη','Σεπόλια']},
+  center:{l:'Κέντρο Αθήνας',a:['Αθήνα - Κέντρο','Άγιος Ελευθέριος','Άγιος Νικόλαος','Άγιος Παντελεήμονας','Ακαδημία','Ακαδημία Πλάτωνος','Αμπελόκηποι','Άνω Πατήσια','Γκάζι - Μεταξουργείο - Βοτανικός','Γκύζη','Γουδή','Εξάρχεια','Ζωγράφου','Θησείο','Θυμαράκια','Ιλίσια','Κάτω Πατήσια','Κεραμεικός','Κολωνάκι','Κολωνός','Κουκάκι','Κυψέλη','Μετς','Μοναστηράκι','Νέος Κόσμος','Όσιος Λουκάς','Παγκράτι','Πατήσια','Πετράλωνα','Πλάκα','Πλατεία Αμερικής','Πλατεία Αττικής','Πολύγωνο','Ριζούπολη','Σεπόλια']},
   piraeus:{l:'Πειραιάς',a:['Αγία Τριάδα','Δραπετσώνα','Ηπειρώτικα','Καλλίπολη','Καστέλλα','Κέντρο','Κερατσίνι','Μοσχάτο','Νέο Φάληρο','Νίκαια','Πασαλιμάνι','Πειραϊκή','Πειραιάς','Τερψιθέα','Φρεατσύδα','Χατζηκυριάκειο']}
 };
 const RES=['Διαμέρισμα','Μονοκατοικία','Μεζονέτα','Γκαρσονιέρα','οικία','Βίλα'];
@@ -275,10 +275,29 @@ function renderTags(cat,trans,sec,area,pMin,pMax){
 function resetAll(){['fCat','fTrans','fSec'].forEach(id=>document.getElementById(id).value='');const a=document.getElementById('fArea');a.value='';a.disabled=true;a.innerHTML='<option value="">Περιοχή</option>';['fPMin','fPMax'].forEach(id=>document.getElementById(id).value='');document.getElementById('sortBy').value='newest';apply();}
 
 // ═══ RENDER CARDS ═══
+let RENDER_PAGE=0;const PAGE_SZ=60;let CUR_RESULTS=[];
 function renderCards(results){
+  CUR_RESULTS=results;RENDER_PAGE=0;
   document.getElementById('rCount').textContent=results.length+' αγγελίε'+(results.length===1?'α':'ς');
   if(!results.length){document.getElementById('list').innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Δεν βρέθηκαν αποτελέσματα</div></div>';return;}
-  document.getElementById('list').innerHTML=results.slice(0,60).map(l=>{
+  document.getElementById('list').innerHTML=buildCards(results.slice(0,PAGE_SZ));
+  RENDER_PAGE=1;
+  if(results.length>PAGE_SZ)appendLoadMore();
+}
+function appendLoadMore(){
+  const b=document.createElement('div');b.id='loadMoreBtn';b.className='load-more';b.onclick=loadMore;
+  b.innerHTML=`<button style="width:100%;padding:14px;border:none;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:600;cursor:pointer">Φόρτωσε ακόμα ${Math.min(PAGE_SZ,CUR_RESULTS.length-RENDER_PAGE*PAGE_SZ)} από ${CUR_RESULTS.length-RENDER_PAGE*PAGE_SZ} αγγελίες</button>`;
+  document.getElementById('list').appendChild(b);
+}
+function loadMore(){
+  const el=document.getElementById('loadMoreBtn');if(el)el.remove();
+  const start=RENDER_PAGE*PAGE_SZ,end=start+PAGE_SZ;
+  const chunk=CUR_RESULTS.slice(start,end);
+  document.getElementById('list').insertAdjacentHTML('beforeend',buildCards(chunk));
+  RENDER_PAGE++;
+  if(end<CUR_RESULTS.length)appendLoadMore();
+}
+function buildCards(items){return items.map(l=>{
     const em=EM[l.property_type]||'🏠';
     let bg='';
     if(l.transaction_type==='Πώληση')bg+='<span class="badge badge-sale">Πώληση</span>';
