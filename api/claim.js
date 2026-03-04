@@ -1,4 +1,4 @@
-// api/claim.js — Claim/Unclaim a listing + notify admin via Telegram
+// api/claim.js — Claim/Unclaim a listing + notify admin via Telegram + log to assignments
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -37,7 +37,6 @@ export default async function handler(req, res) {
     const userTag = users[0].username ? `@${users[0].username}` : `ID: ${telegram_user_id}`;
 
     if (action === 'claim') {
-      // Check if already claimed by someone else
       const checkResp = await fetch(
         `${SB_URL}/rest/v1/listings?listing_id=eq.${listing_id}&select=claimed_by,property_type,area,price,square_meters,listing_url`,
         { headers }
@@ -48,7 +47,7 @@ export default async function handler(req, res) {
         return res.status(409).json({ error: 'Already claimed by another user' });
       }
 
-      // Claim it
+      // Update listing
       await fetch(
         `${SB_URL}/rest/v1/listings?listing_id=eq.${listing_id}`,
         {
@@ -62,9 +61,32 @@ export default async function handler(req, res) {
         }
       );
 
+      // Log to assignments table
+      const l = listing[0] || {};
+      try {
+        await fetch(`${SB_URL}/rest/v1/assignments`, {
+          method: 'POST',
+          headers: { ...headers, 'Prefer': 'return=minimal' },
+          body: JSON.stringify({
+            listing_id,
+            telegram_user_id,
+            agent_name: userName,
+            agent_username: users[0].username || null,
+            property_type: l.property_type || null,
+            area: l.area || null,
+            price: l.price || null,
+            square_meters: l.square_meters || null,
+            listing_url: l.listing_url || `https://www.spitogatos.gr/aggelia/${listing_id}`,
+            status: 'active',
+            claimed_at: new Date().toISOString()
+          })
+        });
+      } catch (aErr) {
+        console.error('Assignment log error:', aErr);
+      }
+
       // Notify admin via Telegram
       if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
-        const l = listing[0] || {};
         const price = l.price ? new Intl.NumberFormat('el-GR').format(Math.round(l.price)) + '€' : 'N/A';
         const sqm = l.square_meters ? `${l.square_meters}τμ` : '';
         const propInfo = [l.property_type, sqm, l.area].filter(Boolean).join(' · ');
@@ -92,7 +114,7 @@ export default async function handler(req, res) {
         }
       }
     } else {
-      // Unclaim - only if same user
+      // Unclaim
       const checkResp = await fetch(
         `${SB_URL}/rest/v1/listings?listing_id=eq.${listing_id}&claimed_by=eq.${telegram_user_id}&select=property_type,area,price`,
         { headers }
@@ -111,6 +133,23 @@ export default async function handler(req, res) {
           })
         }
       );
+
+      // Update assignments table — mark as released
+      try {
+        await fetch(
+          `${SB_URL}/rest/v1/assignments?listing_id=eq.${listing_id}&telegram_user_id=eq.${telegram_user_id}&status=eq.active`,
+          {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({
+              status: 'released',
+              released_at: new Date().toISOString()
+            })
+          }
+        );
+      } catch (aErr) {
+        console.error('Assignment update error:', aErr);
+      }
 
       // Notify admin about unclaim
       if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID && listing.length) {
