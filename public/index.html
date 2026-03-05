@@ -403,7 +403,7 @@ function renderComments(listingId,comments){
     const isOwn=uid&&c.telegram_user_id==uid;
     const initial=(c.user_name||'?').charAt(0).toUpperCase();
     const edited=c.updated_at&&c.updated_at!==c.created_at?' (επεξ.)':'';
-    return`<div class="comment-bubble${isOwn?' comment-own'}" data-cid="${c.id}">
+    return`<div class="comment-bubble${isOwn?' comment-own':''}" data-cid="${c.id}">
 <div class="comment-header"><div class="comment-avatar">${initial}</div><span class="comment-name">${c.user_name||'Χρήστης'}</span><span class="comment-time">${timeAgo(c.created_at)}${edited}</span></div>
 <div class="comment-body" id="cbody-${c.id}">${escHtml(c.body)}</div>
 ${isOwn?`<div class="comment-actions"><button class="comment-action-btn" onclick="startEditComment(${c.id},'${listingId}')">✏️ Επεξεργασία</button><button class="comment-action-btn del" onclick="deleteComment(${c.id},'${listingId}')">🗑 Διαγραφή</button></div>`:''}
