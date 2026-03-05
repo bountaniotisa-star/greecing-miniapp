@@ -87,6 +87,37 @@
   padding:2px 8px;border-radius:10px;background:var(--gold);color:#fff;
   font-size:10px;font-weight:700;
 }
+/* ═══ COMMENTS ═══ */
+.card-comment{display:flex;align-items:center;gap:5px;margin-top:6px;padding:5px 8px;background:var(--bg-input);border-radius:6px;font-size:10px;color:var(--text-sec);font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.card-comment-icon{flex-shrink:0;font-size:11px}
+.card-comment-count{flex-shrink:0;background:var(--navy);color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:10px;margin-left:auto}
+.comments-section{margin-top:14px}
+.comments-thread{max-height:300px;overflow-y:auto;margin-bottom:10px}
+.comment-bubble{padding:10px 12px;background:var(--bg-input);border-radius:10px;margin-bottom:6px;position:relative}
+.comment-bubble.comment-own{background:rgba(2,4,94,.05);border:1px solid rgba(2,4,94,.08)}
+.comment-header{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.comment-avatar{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
+.comment-name{font-size:11px;font-weight:700;color:var(--navy)}
+.comment-time{font-size:9px;color:var(--text-dim);font-weight:500;margin-left:auto}
+.comment-body{font-size:12px;color:var(--text);line-height:1.5;word-break:break-word}
+.comment-actions{display:flex;gap:8px;margin-top:5px}
+.comment-action-btn{background:none;border:none;color:var(--text-dim);font-size:10px;font-weight:600;cursor:pointer;padding:2px 0;font-family:var(--font)}
+.comment-action-btn:hover{color:var(--navy)}
+.comment-action-btn.del:hover{color:var(--red)}
+.comment-input-wrap{display:flex;gap:6px;align-items:flex-end}
+.comment-textarea{flex:1;padding:8px 10px;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text);resize:none;outline:none;min-height:36px;max-height:80px;line-height:1.4}
+.comment-textarea:focus{border-color:var(--navy)}
+.comment-textarea::placeholder{color:var(--text-dim)}
+.comment-send{padding:8px 14px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;height:36px}
+.comment-send:active{transform:scale(.95)}
+.comment-send:disabled{opacity:.4;cursor:not-allowed}
+.comment-empty{text-align:center;padding:16px;color:var(--text-dim);font-size:11px;font-style:italic}
+.comment-chars{font-size:9px;color:var(--text-dim);text-align:right;margin-top:3px}
+.comment-edit-wrap{display:flex;gap:5px;margin-top:6px}
+.comment-edit-input{flex:1;padding:6px 8px;background:#fff;border:1px solid var(--navy);border-radius:8px;font-family:var(--font);font-size:11px;color:var(--text);outline:none;resize:none;min-height:30px}
+.comment-edit-save,.comment-edit-cancel{padding:5px 10px;border:none;border-radius:6px;font-family:var(--font);font-size:10px;font-weight:700;cursor:pointer}
+.comment-edit-save{background:var(--navy);color:#fff}
+.comment-edit-cancel{background:var(--bg-input);color:var(--text-dim)}
 </style>
 </head>
 <body>
@@ -105,7 +136,7 @@
   </div>
   <div class="filters-section">
     <div class="filter-row">
-      <div class="filter-select"><select id="fCat" onchange="apply()"><option value="">Βατηγορία</option><option value="res">🏠 Κατοικία</option><option value="com">🏢 Επαγγελματικό</option></select></div>
+      <div class="filter-select"><select id="fCat" onchange="apply()"><option value="">Κατηγορία</option><option value="res">🏠 Κατοικία</option><option value="com">🏢 Επαγγελματικό</option></select></div>
       <div class="filter-select"><select id="fTrans" onchange="apply()"><option value="">Συναλλαγή</option><option value="Πώληση">Πώληση</option><option value="Ενοικίαση">Ενοικίαση</option></select></div>
     </div>
     <div class="filter-row">
@@ -157,13 +188,14 @@ const SEC={
   east:{l:'Ανατολικά Προάστια',a:['Αρτέμιδα','Βαρνάβας','Γλυκά Νερά','Γραμματικό','Κορωπί','Μαραθώνας','Μαρκόπουλο','Νέα Μάκρη','Παιανία','Ραφήνα','Σπάτα','Σχινιάς']},
   west:{l:'Δυτικά Προάστια',a:['Αγία Βαρβάρα','Άγιοι Ανάργυροι','Αιγάλεω','Αχαρνές','Ίλιον','Καματερό','Περιστέρι','Πετρούπολη','Χαϊδάρι']},
   center:{l:'Κέντρο Αθήνας',a:['Αθήνα - Κέντρο','Άγιος Ελευθέριος','Άγιος Νικόλαος','Άγιος Παντελεήμονας','Ακαδημία','Ακαδημία Πλάτωνος','Αμπελόκηποι','Άνω Πατήσια','Γκάζι - Μεταξουργείο - Βοτανικός','Γκύζη','Γουδή','Εξάρχεια','Ζωγράφου','Θησείο','Θυμαράκια','Ιλίσια','Κάτω Πατήσια','Κεραμεικός','Κολωνάκι','Κολωνός','Κουκάκι','Κυψέλη','Μετς','Μοναστηράκι','Νέος Κόσμος','Όσιος Λουκάς','Παγκράτι','Πατήσια','Πετράλωνα','Πλάκα','Πλατεία Αμερικής','Πλατεία Αττικής','Πολύγωνο','Ριζούπολη','Σεπόλια']},
-  piraeus:{l:'Πειραιάς',a:['Αγία Τριάδα','Δραπετσώνα','Ηπειρώτικα','Καλλίπολη','Καστέλλα','Κέντρο','Κερατσίνι','Μοσχάτο','Νέο Φάληρο','Νίκαια','Πασαλιμάνι','Πειραϊκή','Πειραιάς','Τερψιθέα','Φρεατσύδα','Χατζηκυριάκειο']}
+  piraeus:{l:'Πειραιάς',a:['Αγία Τριάδα','Δραπετσώνα','Ηπειρώτικα','Καλλίπολη','Καστέλλα','Κέντρο','Κερατσίνι','Μοσχάτο','Νέο Φάληρο','Νίκαια','Πασαλιμάνι','Πειραϊκή','Πειραιάς','Τερψιθέα','Φρεαττύδα','Χατζηκυριάκειο']}
 };
 const RES=['Διαμέρισμα','Μονοκατοικία','Μεζονέτα','Γκαρσονιέρα','οικία','Βίλα'];
 const COM=['Γραφείο','Κατάστημα'];
 const EM={'Διαμέρισμα':'🏢','Μονοκατοικία':'🏡','Μεζονέτα':'🏘️','Γραφείο':'🏢','Κατάστημα':'🏪','Γκαρσονιέρα':'🏠','οικία':'🏡'};
 
 let ALL=[],FILT=[];
+let COMMENTS={};
 let DROPS_ONLY=false;
 let SHOW_CLAIMED=false;
 function toggleClaimed(){
@@ -181,9 +213,17 @@ function toggleDrops(){
 async function load(){
   document.getElementById('list').innerHTML='<div class="loading"><div class="spinner"></div><div class="loading-text">Φόρτωση αγγελιών...</div></div>';
   try{
-    const r=await fetch(`${SB_URL}/rest/v1/${TBL}?select=*&order=last_seen_date.desc&limit=2000`,{headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`}});
+    const [r,cr]=await Promise.all([
+      fetch(`${SB_URL}/rest/v1/${TBL}?select=*&order=last_seen_date.desc&limit=2000`,{headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`}}),
+      fetch(`${SB_URL}/rest/v1/comments?select=id,listing_id,telegram_user_id,user_name,body,created_at,updated_at&order=created_at.desc`,{headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`}})
+    ]);
     if(!r.ok)throw new Error('HTTP '+r.status);
     ALL=await r.json();
+    // Group comments by listing_id
+    COMMENTS={};
+    if(cr.ok){const allC=await cr.json();allC.forEach(c=>{if(!COMMENTS[c.listing_id])COMMENTS[c.listing_id]=[];COMMENTS[c.listing_id].push(c);});
+    // Reverse each group so oldest first (for thread view), card shows latest (index 0)
+    Object.keys(COMMENTS).forEach(k=>COMMENTS[k].reverse());}
     apply();
   }catch(e){document.getElementById('list').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Σφάλμα: ${e.message}</div></div>`;}
 }
@@ -320,6 +360,7 @@ ${ch}
 <div class="card-location">📍 ${l.area||''}${l.city?' · '+l.city:''}</div>
 ${ff.length?`<div class="card-features">${ff.map(f=>`<span class="feat">${f}</span>`).join('')}</div>`:''}
 <div class="card-dates"><span>${fLbl}: ${timeAgo(first)}</span>${showLast?`<span>Ανανεώθηκε: ${timeAgo(last)}</span>`:''}</div>
+${(()=>{const cs=COMMENTS[l.listing_id];if(!cs||!cs.length)return'';const last=cs[cs.length-1];const t=last.body.length>55?last.body.substring(0,55)+'…':last.body;return`<div class="card-comment"><span class="card-comment-icon">💬</span>${last.user_name}: ${t}<span class="card-comment-count">${cs.length}</span></div>`;})()}
 </div>`;}).join('');
 }
 
@@ -341,13 +382,118 @@ function openD(id){
 <div class="detail-section"><div class="detail-section-title">📞 Τηλέφωνο</div><div class="detail-phone">${phones.length?phones.map(p=>`<a href="tel:${p}">${p}</a>`).join(''):'<span class="detail-placeholder">Μη διαθέσιμο</span>'}</div></div>
 <div class="detail-section"><div class="detail-section-title">⭐ Score</div><div class="detail-stars">★★★★★</div><div class="detail-placeholder">Σύντομα διαθέσιμο</div></div>
 <div class="detail-section"><div class="detail-section-title">🏢 Μεσιτικά</div><div class="detail-placeholder">Σύντομα διαθέσιμο</div></div>
-<div class="detail-dates">📅 Ανέβηκε: ${fmtDate(l.first_seen_date||l.last_seen_date)}<br>🔄 Ενημέρωση: ${fmtDate(l.last_seen_date)}<br>📊 Κατάσταση: ${l.change_type==='NEW'?'Νέα αγγελία':l.change_type==='PRICE_DROP'?'Μείωση τιμής':l.change_type==='PRICE_UP'?'Αύξηση τ�yμής':'Ενημερώθηκε'}</div>
+<div class="detail-section comments-section"><div class="detail-section-title">💬 Σχόλια</div><div id="comments-thread" class="comments-thread"></div><div class="comment-input-wrap"><textarea id="comment-input" class="comment-textarea" maxlength="500" placeholder="Γράψε σχόλιο..." rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';document.getElementById('comment-chars').textContent=this.value.length+'/500'"></textarea><button class="comment-send" id="comment-send-btn" onclick="addComment('${l.listing_id}')">Αποστολή</button></div><div class="comment-chars" id="comment-chars">0/500</div></div>
+<div class="detail-dates">📅 Ανέβηκε: ${fmtDate(l.first_seen_date||l.last_seen_date)}<br>🔄 Ενημέρωση: ${fmtDate(l.last_seen_date)}<br>📊 Κατάσταση: ${l.change_type==='NEW'?'Νέα αγγελία':l.change_type==='PRICE_DROP'?'Μείωση τιμής':l.change_type==='PRICE_UP'?'Αύξηση τιμής':'Ενημερώθηκε'}</div>
 ${l.claimed_by?(l.claimed_by==window.TG_USER_ID?`<button class="btn-claim claimed" onclick="unclaimListing('${l.listing_id}')">↩️ Ακύρωση Ανάθεσης</button>`:`<div class="claimed-badge">✅ Ανατέθηκε σε ${l.claimed_by_name||'Συνεργάτη'}</div>`):`<button class="btn-claim" onclick="claimListing('${l.listing_id}')">🤝 Ανάθεση σε εμένα</button>`}
 <a class="btn-link" href="${l.listing_url||'https://www.spitogatos.gr/aggelia/'+l.listing_id}" target="_blank">🔗 Δες στο Spitogatos →</a>
 </div>`;
   document.getElementById('overlay').classList.add('open');
+  loadComments(l.listing_id);
 }
-function closeDetail(){document.getElementById('overlay').classList.remove('open');}
+function closeDetail(){document.getElementById('overlay').classList.remove('open');window._currentListingId=null;}
+
+// ═══ COMMENTS CRUD ═══
+window._currentListingId=null;
+
+function renderComments(listingId,comments){
+  const el=document.getElementById('comments-thread');
+  if(!comments||!comments.length){el.innerHTML='<div class="comment-empty">Κανένα σχόλιο ακόμα. Γράψε πρώτος!</div>';return;}
+  const uid=window.TG_USER_ID;
+  el.innerHTML=comments.map(c=>{
+    const isOwn=uid&&c.telegram_user_id==uid;
+    const initial=(c.user_name||'?').charAt(0).toUpperCase();
+    const edited=c.updated_at&&c.updated_at!==c.created_at?' (επεξ.)':'';
+    return`<div class="comment-bubble${isOwn?' comment-own'}" data-cid="${c.id}">
+<div class="comment-header"><div class="comment-avatar">${initial}</div><span class="comment-name">${c.user_name||'Χρήστης'}</span><span class="comment-time">${timeAgo(c.created_at)}${edited}</span></div>
+<div class="comment-body" id="cbody-${c.id}">${escHtml(c.body)}</div>
+${isOwn?`<div class="comment-actions"><button class="comment-action-btn" onclick="startEditComment(${c.id},'${listingId}')">✏️ Επεξεργασία</button><button class="comment-action-btn del" onclick="deleteComment(${c.id},'${listingId}')">🗑 Διαγραφή</button></div>`:''}
+</div>`;}).join('');
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+async function loadComments(listingId){
+  window._currentListingId=listingId;
+  const el=document.getElementById('comments-thread');
+  el.innerHTML='<div class="comment-empty">Φόρτωση σχολίων...</div>';
+  try{
+    const r=await fetch(`/api/comments?listing_id=${encodeURIComponent(listingId)}`);
+    const data=await r.json();
+    COMMENTS[listingId]=data;
+    renderComments(listingId,data);
+  }catch(e){el.innerHTML='<div class="comment-empty">Σφάλμα φόρτωσης σχολίων</div>';}
+}
+
+async function addComment(listingId){
+  const input=document.getElementById('comment-input');
+  const body=input.value.trim();
+  if(!body)return;
+  if(body.length>500){alert('Μέγιστο 500 χαρακτήρες');return;}
+  const btn=document.getElementById('comment-send-btn');
+  btn.disabled=true;btn.textContent='...';
+  try{
+    const r=await fetch('/api/comments',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'add',listing_id:listingId,telegram_user_id:window.TG_USER_ID,body})
+    });
+    const data=await r.json();
+    if(data.success){
+      input.value='';input.style.height='auto';
+      document.getElementById('comment-chars').textContent='0/500';
+      await loadComments(listingId);
+      // Scroll to bottom
+      const thread=document.getElementById('comments-thread');
+      thread.scrollTop=thread.scrollHeight;
+      // Update card cache
+      apply();
+    }else{alert(data.error||'Σφάλμα');}
+  }catch(e){alert('Σφάλμα σύνδεσης');}
+  finally{btn.disabled=false;btn.textContent='Αποστολή';}
+}
+
+function startEditComment(commentId,listingId){
+  const bodyEl=document.getElementById('cbody-'+commentId);
+  const currentText=bodyEl.innerText||bodyEl.textContent;
+  const bubble=bodyEl.closest('.comment-bubble');
+  const actionsEl=bubble.querySelector('.comment-actions');
+  if(actionsEl)actionsEl.style.display='none';
+  bodyEl.innerHTML=`<div class="comment-edit-wrap"><textarea class="comment-edit-input" id="cedit-${commentId}" maxlength="500">${escHtmlAttr(currentText)}</textarea><button class="comment-edit-save" onclick="saveEditComment(${commentId},'${listingId}')">Αποθ.</button><button class="comment-edit-cancel" onclick="loadComments('${listingId}')">Ακύρωση</button></div>`;
+  document.getElementById('cedit-'+commentId).focus();
+}
+
+function escHtmlAttr(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+async function saveEditComment(commentId,listingId){
+  const input=document.getElementById('cedit-'+commentId);
+  const body=input.value.trim();
+  if(!body){alert('Το σχόλιο δεν μπορεί να είναι κενό');return;}
+  if(body.length>500){alert('Μέγιστο 500 χαρακτήρες');return;}
+  try{
+    const r=await fetch('/api/comments',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'edit',comment_id:commentId,telegram_user_id:window.TG_USER_ID,body})
+    });
+    const data=await r.json();
+    if(data.success){await loadComments(listingId);apply();}
+    else{alert(data.error||'Σφάλμα');}
+  }catch(e){alert('Σφάλμα σύνδεσης');}
+}
+
+async function deleteComment(commentId,listingId){
+  if(!confirm('Διαγραφή σχολίου;'))return;
+  try{
+    const r=await fetch('/api/comments',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'delete',comment_id:commentId,telegram_user_id:window.TG_USER_ID})
+    });
+    const data=await r.json();
+    if(data.success){await loadComments(listingId);apply();}
+    else{alert(data.error||'Σφάλμα');}
+  }catch(e){alert('Σφάλμα σύνδεσης');}
+}
 
 // ═══ AUTH GATE ═══
 async function init(){
